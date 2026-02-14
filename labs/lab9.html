@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Encoded Payload XSS Lab - Advanced XSS Practice Lab for Ethical Cybersecurity Training by Satyajit Sethy">
+    <meta name="author" content="Satyajit Sethy">
+    <title>Lab #09 - Encoded Payload | XSS Practice Lab</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="lab-container">
+        <header class="lab-header">
+            <h1 class="glitch" data-text="LAB #09: ENCODED PAYLOAD">LAB #09: ENCODED PAYLOAD</h1>
+            <div class="warning-banner">
+                ⚠️ This platform is for ethical cybersecurity learning purposes only. ⚠️
+            </div>
+        </header>
+
+        <main>
+            <section class="lab-description">
+                <h2>Lab Objective</h2>
+                <p>Learn how XSS payloads can be encoded to bypass filters and still execute in the browser.</p>
+                <div class="lab-objective">
+                    Goal: Use HTML entities or JavaScript encoding to execute XSS.
+                </div>
+            </section>
+
+            <section class="vulnerable-section">
+                <div class="input-group">
+                    <label for="encodedInput">Enter encoded payload:</label>
+                    <input type="text" id="encodedInput" placeholder="Try encoded characters">
+                    <button onclick="decodeAndDisplay()">Process</button>
+                    <button class="reset-button" data-lab="lab9">Reset</button>
+                </div>
+
+                <div class="output-area">
+                    <span class="output-label">Decoded Output</span>
+                    <div id="encodedOutput"></div>
+                </div>
+            </section>
+
+            <section class="lab-description">
+                <h3>💡 Hints</h3>
+                <ul>
+                    <li>Try HTML entities: &lt;img src=x onerror=alert('XSS')&gt;</li>
+                    <li>Try JavaScript encoding: \x3cscript\x3ealert('XSS')\x3c/script\x3e</li>
+                    <li>Try URL encoding: %3Cscript%3Ealert('XSS')%3C/script%3E</li>
+                    <li>Try double encoding: %253Cscript%253Ealert('XSS')%253C/script%253E</li>
+                </ul>
+                
+                <h3>📝 Notes</h3>
+                <ul>
+                    <li>The application decodes the input before displaying</li>
+                    <li>Different contexts may decode differently</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>© 2026 - <span id="currentYear"></span> | Created by Satyajit Sethy</p>
+                <a href="https://github.com/sethysatyajit" target="_blank" rel="noopener noreferrer" class="github-link">GitHub</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        function decodeAndDisplay() {
+            let encodedInput = document.getElementById('encodedInput').value;
+            const output = document.getElementById('encodedOutput');
+            
+            // Simulate HTML entity decoding
+            const decoded = encodedInput
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&quot;/g, '"')
+                .replace(/&#39;/g, "'")
+                .replace(/&amp;/g, '&');
+            
+            // VULNERABLE CODE: Display decoded content
+            output.innerHTML = 'Decoded: ' + decoded;
+            
+            console.log('Encoded input:', encodedInput);
+            console.log('Decoded:', decoded);
+        }
+    </script>
+</body>
+</html>

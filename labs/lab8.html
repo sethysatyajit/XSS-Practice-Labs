@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Basic Filter Bypass XSS Lab - Advanced XSS Practice Lab for Ethical Cybersecurity Training by Satyajit Sethy">
+    <meta name="author" content="Satyajit Sethy">
+    <title>Lab #08 - Filter Bypass Basic | XSS Practice Lab</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="lab-container">
+        <header class="lab-header">
+            <h1 class="glitch" data-text="LAB #08: FILTER BYPASS BASIC">LAB #08: FILTER BYPASS BASIC</h1>
+            <div class="warning-banner">
+                ⚠️ This platform is for ethical cybersecurity learning purposes only. ⚠️
+            </div>
+        </header>
+
+        <main>
+            <section class="lab-description">
+                <h2>Lab Objective</h2>
+                <p>Practice bypassing basic XSS filters that remove or block common XSS patterns.</p>
+                <div class="lab-objective">
+                    Goal: Execute JavaScript despite basic filtering of script tags.
+                </div>
+            </section>
+
+            <section class="vulnerable-section">
+                <div class="input-group">
+                    <label for="filterInput">Enter your message (script tags are filtered):</label>
+                    <input type="text" id="filterInput" placeholder="Try to bypass the filter">
+                    <button onclick="processInput()">Submit</button>
+                    <button class="reset-button" data-lab="lab8">Reset</button>
+                </div>
+
+                <div class="output-area">
+                    <span class="output-label">Filtered Output</span>
+                    <div id="filterOutput"></div>
+                </div>
+            </section>
+
+            <section class="lab-description">
+                <h3>💡 Hints</h3>
+                <ul>
+                    <li>The filter removes &lt;script&gt; tags case-sensitively</li>
+                    <li>Try mixed case: &lt;ScRiPt&gt;alert('XSS')&lt;/ScRiPt&gt;</li>
+                    <li>Try alternative tags: &lt;img src=x onerror=alert(1)&gt;</li>
+                    <li>Try using event handlers instead of script tags</li>
+                </ul>
+                
+                <h3>Filter Details</h3>
+                <ul>
+                    <li>Removes: &lt;script&gt; and &lt;/script&gt;</li>
+                    <li>Case-sensitive filtering</li>
+                    <li>Other tags and attributes are allowed</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>© 2026 - <span id="currentYear"></span> | Created by Satyajit Sethy</p>
+                <a href="https://github.com/sethysatyajit" target="_blank" rel="noopener noreferrer" class="github-link">GitHub</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        function processInput() {
+            let userInput = document.getElementById('filterInput').value;
+            const output = document.getElementById('filterOutput');
+            
+            // Basic filter: remove script tags (case-sensitive)
+            userInput = userInput.replace(/<script>/g, '');
+            userInput = userInput.replace(/<\/script>/g, '');
+            
+            // VULNERABLE CODE: Still vulnerable despite basic filtering
+            output.innerHTML = 'Message: ' + userInput;
+            
+            console.log('Filtered input:', userInput);
+        }
+    </script>
+</body>
+</html>

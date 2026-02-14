@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="JSON Injection XSS Lab - Advanced XSS Practice Lab for Ethical Cybersecurity Training by Satyajit Sethy">
+    <meta name="author" content="Satyajit Sethy">
+    <title>Lab #10 - JSON Injection | XSS Practice Lab</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="lab-container">
+        <header class="lab-header">
+            <h1 class="glitch" data-text="LAB #10: JSON INJECTION">LAB #10: JSON INJECTION</h1>
+            <div class="warning-banner">
+                ⚠️ This platform is for ethical cybersecurity learning purposes only. ⚠️
+            </div>
+        </header>
+
+        <main>
+            <section class="lab-description">
+                <h2>Lab Objective</h2>
+                <p>Learn how XSS can occur when JSON data is improperly handled and inserted into HTML.</p>
+                <div class="lab-objective">
+                    Goal: Inject XSS payload through JSON data that gets rendered in the page.
+                </div>
+            </section>
+
+            <section class="vulnerable-section">
+                <div class="input-group">
+                    <label for="jsonInput">Enter JSON data (format: {"name": "value"}):</label>
+                    <textarea id="jsonInput" rows="6" cols="50" placeholder='{"name": "John", "message": "Hello"}'>{"name": "John", "message": "Hello"}</textarea>
+                    <button onclick="processJSON()">Process JSON</button>
+                    <button class="reset-button" data-lab="lab10">Reset</button>
+                </div>
+
+                <div class="output-area">
+                    <span class="output-label">Rendered Data</span>
+                    <div id="jsonOutput"></div>
+                </div>
+            </section>
+
+            <section class="lab-description">
+                <h3>💡 Hints</h3>
+                <ul>
+                    <li>Try injecting in string values: {"name": "&lt;img src=x onerror=alert(1)&gt;"}</li>
+                    <li>Try breaking out of JSON context</li>
+                    <li>Try: {"name": "</script><script>alert('XSS')</script>"}</li>
+                    <li>Unicode escape sequences might work: \u003cimg src=x onerror=alert(1)\u003e</li>
+                </ul>
+                
+                <h3>📝 Notes</h3>
+                <ul>
+                    <li>The application parses JSON and displays values directly</li>
+                    <li>No sanitization is applied to the parsed values</li>
+                    <li>This simulates vulnerable single-page applications</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>© 2026 - <span id="currentYear"></span> | Created by Satyajit Sethy</p>
+                <a href="https://github.com/sethysatyajit" target="_blank" rel="noopener noreferrer" class="github-link">GitHub</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        function processJSON() {
+            const jsonInput = document.getElementById('jsonInput').value;
+            const output = document.getElementById('jsonOutput');
+            
+            try {
+                // Parse JSON
+                const data = JSON.parse(jsonInput);
+                
+                // Build HTML output (VULNERABLE)
+                let html = '<div class="json-data">';
+                for (let key in data) {
+                    // Direct insertion without sanitization
+                    html += `<p><strong>${key}:</strong> ${data[key]}</p>`;
+                }
+                html += '</div>';
+                
+                output.innerHTML = html;
+                
+                console.log('Processed JSON:', data);
+            } catch (e) {
+                output.innerHTML = '<p style="color: red;">Invalid JSON: ' + e.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>

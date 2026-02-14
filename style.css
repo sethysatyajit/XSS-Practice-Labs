@@ -1,0 +1,401 @@
+/* XSS Practice Lab - Hacker Theme CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #000;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Matrix-like background effect */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px);
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: -1;
+    animation: scan 8s linear infinite;
+}
+
+@keyframes scan {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(100%); }
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+/* Header Styles */
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    border-bottom: 2px solid #00ff00;
+    padding-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0, 255, 0, 0.2);
+}
+
+h1 {
+    font-size: 3.5rem;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    text-shadow: 0 0 10px #00ff00,
+                 0 0 20px #00ff00,
+                 0 0 30px #00ff00,
+                 0 0 40px #00ff00;
+    animation: flicker 3s infinite;
+    margin-bottom: 20px;
+}
+
+.glitch {
+    position: relative;
+}
+
+.glitch::before,
+.glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.glitch::before {
+    animation: glitch-effect 3s infinite;
+    color: #ff00ff;
+    z-index: -1;
+}
+
+.glitch::after {
+    animation: glitch-effect 2s infinite;
+    color: #00ffff;
+    z-index: -2;
+}
+
+@keyframes glitch-effect {
+    0%, 100% { clip: rect(0, 0, 0, 0); transform: translate(0); }
+    10% { clip: rect(10px, 1000px, 20px, 0); transform: translate(-2px); }
+    20% { clip: rect(30px, 1000px, 40px, 0); transform: translate(2px); }
+    30% { clip: rect(50px, 1000px, 60px, 0); transform: translate(-1px); }
+    40% { clip: rect(70px, 1000px, 80px, 0); transform: translate(1px); }
+    50% { clip: rect(90px, 1000px, 100px, 0); transform: translate(-2px); }
+    60% { clip: rect(110px, 1000px, 120px, 0); transform: translate(2px); }
+    70% { clip: rect(130px, 1000px, 140px, 0); transform: translate(-1px); }
+    80% { clip: rect(150px, 1000px, 160px, 0); transform: translate(1px); }
+    90% { clip: rect(170px, 1000px, 180px, 0); transform: translate(-2px); }
+}
+
+@keyframes flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+    20%, 24%, 55% { opacity: 0.5; }
+}
+
+.warning-banner {
+    background-color: rgba(255, 0, 0, 0.2);
+    border: 2px solid #ff0000;
+    color: #ff0000;
+    padding: 15px;
+    margin: 20px 0;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(255, 0, 0, 0.5); }
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    margin-top: 10px;
+}
+
+/* Lab Grid Styles */
+.lab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    margin: 30px 0;
+}
+
+.lab-card {
+    background-color: rgba(0, 255, 0, 0.05);
+    border: 2px solid #00ff00;
+    border-radius: 8px;
+    padding: 20px;
+    text-decoration: none;
+    color: #00ff00;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.lab-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.lab-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+    border-color: #00ff00;
+    background-color: rgba(0, 255, 0, 0.1);
+}
+
+.lab-card:hover::before {
+    left: 100%;
+}
+
+.lab-number {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #00ff00;
+    opacity: 0.8;
+}
+
+.lab-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.lab-difficulty {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-top: 10px;
+}
+
+.difficulty-beginner { background-color: rgba(0, 255, 0, 0.3); color: #00ff00; border: 1px solid #00ff00; }
+.difficulty-intermediate { background-color: rgba(255, 255, 0, 0.3); color: #ffff00; border: 1px solid #ffff00; }
+.difficulty-advanced { background-color: rgba(255, 0, 0, 0.3); color: #ff0000; border: 1px solid #ff0000; }
+.difficulty-pro { background-color: rgba(255, 0, 255, 0.3); color: #ff00ff; border: 1px solid #ff00ff; }
+
+/* Footer Styles */
+footer {
+    margin-top: 50px;
+    padding: 20px 0;
+    border-top: 2px solid #00ff00;
+    text-align: center;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.github-link {
+    color: #00ff00;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    border: 2px solid #00ff00;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.github-link:hover {
+    background-color: #00ff00;
+    color: #000;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+}
+
+.github-link svg {
+    fill: currentColor;
+}
+
+/* Lab Page Specific Styles */
+.lab-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.lab-header {
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #00ff00;
+}
+
+.lab-description {
+    background-color: rgba(0, 255, 0, 0.1);
+    padding: 15px;
+    border-left: 4px solid #00ff00;
+    margin: 20px 0;
+    font-size: 1.1rem;
+}
+
+.lab-objective {
+    color: #ffff00;
+    margin: 15px 0;
+    font-weight: bold;
+}
+
+.input-group {
+    margin: 20px 0;
+}
+
+input[type="text"],
+textarea,
+select {
+    width: 100%;
+    padding: 12px;
+    background-color: #000;
+    border: 2px solid #00ff00;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    margin: 10px 0;
+    transition: all 0.3s ease;
+}
+
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+}
+
+button {
+    background-color: transparent;
+    color: #00ff00;
+    border: 2px solid #00ff00;
+    padding: 12px 24px;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+button:hover {
+    background-color: #00ff00;
+    color: #000;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+    transform: scale(1.05);
+}
+
+.output-area {
+    background-color: rgba(0, 255, 0, 0.1);
+    border: 2px solid #00ff00;
+    padding: 20px;
+    margin: 20px 0;
+    min-height: 100px;
+    position: relative;
+}
+
+.output-label {
+    position: absolute;
+    top: -12px;
+    left: 10px;
+    background-color: #000;
+    padding: 0 10px;
+    font-size: 0.9rem;
+    color: #00ff00;
+}
+
+.vulnerable-section {
+    border: 2px dashed #ff0000;
+    padding: 20px;
+    margin: 20px 0;
+    background-color: rgba(255, 0, 0, 0.05);
+    position: relative;
+}
+
+.vulnerable-section::before {
+    content: "⚠️ VULNERABLE AREA ⚠️";
+    position: absolute;
+    top: -12px;
+    left: 10px;
+    background-color: #000;
+    padding: 0 10px;
+    color: #ff0000;
+    font-size: 0.9rem;
+}
+
+.reset-button {
+    margin-left: 10px;
+    border-color: #ff0000;
+    color: #ff0000;
+}
+
+.reset-button:hover {
+    background-color: #ff0000;
+    color: #000;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+    
+    .lab-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 2rem;
+    }
+    
+    .container {
+        padding: 10px;
+    }
+}
+
+/* Utility Classes */
+.text-center { text-align: center; }
+.mt-20 { margin-top: 20px; }
+.mb-20 { margin-bottom: 20px; }
+.hidden { display: none; }

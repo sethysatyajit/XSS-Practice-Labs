@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Stored XSS using localStorage - Advanced XSS Practice Lab for Ethical Cybersecurity Training by Satyajit Sethy">
+    <meta name="author" content="Satyajit Sethy">
+    <title>Lab #03 - Stored XSS (localStorage) | XSS Practice Lab</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="lab-container">
+        <header class="lab-header">
+            <h1 class="glitch" data-text="LAB #03: STORED XSS">LAB #03: STORED XSS (localStorage)</h1>
+            <div class="warning-banner">
+                ⚠️ This platform is for ethical cybersecurity learning purposes only. ⚠️
+            </div>
+        </header>
+
+        <main>
+            <section class="lab-description">
+                <h2>Lab Objective</h2>
+                <p>Learn how XSS payloads can be stored in the browser's localStorage and executed when retrieved.</p>
+                <div class="lab-objective">
+                    Goal: Store a malicious payload in localStorage that executes when the page loads.
+                </div>
+            </section>
+
+            <section class="vulnerable-section">
+                <div class="input-group">
+                    <label for="storageInput">Enter data to store:</label>
+                    <input type="text" id="storageInput" placeholder="Data to persist">
+                    <button onclick="storeData()">Store Data</button>
+                    <button onclick="loadData()">Load Data</button>
+                    <button class="reset-button" data-lab="lab3">Reset</button>
+                </div>
+
+                <div class="output-area">
+                    <span class="output-label">Stored Data</span>
+                    <div id="storedOutput">No stored data</div>
+                </div>
+            </section>
+
+            <section class="lab-description">
+                <h3>💡 Hints</h3>
+                <ul>
+                    <li>Data persists even after page refresh</li>
+                    <li>Try: &lt;script&gt;alert('Stored')&lt;/script&gt;</li>
+                    <li>The payload executes when loaded, not when stored</li>
+                </ul>
+                
+                <h3>📝 Notes</h3>
+                <ul>
+                    <li>Stored XSS affects all users who view the stored data</li>
+                    <li>localStorage persists until explicitly cleared</li>
+                    <li>This simulates server-side stored XSS but in the browser</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>© 2026 - <span id="currentYear"></span> | Created by Satyajit Sethy</p>
+                <a href="https://github.com/sethysatyajit" target="_blank" rel="noopener noreferrer" class="github-link">GitHub</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        // Load stored data when page loads
+        window.onload = function() {
+            loadData();
+        };
+
+        function storeData() {
+            const data = document.getElementById('storageInput').value;
+            localStorage.setItem('storedData', data);
+            alert('Data stored! Click "Load Data" to see it.');
+        }
+
+        function loadData() {
+            const storedData = localStorage.getItem('storedData');
+            const output = document.getElementById('storedOutput');
+            
+            if (storedData) {
+                // VULNERABLE CODE: Directly inserting stored data into HTML
+                output.innerHTML = storedData;
+            } else {
+                output.innerHTML = 'No stored data';
+            }
+        }
+    </script>
+</body>
+</html>

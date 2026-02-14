@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Image onerror XSS Injection Lab - Advanced XSS Practice Lab for Ethical Cybersecurity Training by Satyajit Sethy">
+    <meta name="author" content="Satyajit Sethy">
+    <title>Lab #05 - Image onerror Injection | XSS Practice Lab</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="lab-container">
+        <header class="lab-header">
+            <h1 class="glitch" data-text="LAB #05: IMAGE ONERROR XSS">LAB #05: IMAGE ONERROR XSS</h1>
+            <div class="warning-banner">
+                ⚠️ This platform is for ethical cybersecurity learning purposes only. ⚠️
+            </div>
+        </header>
+
+        <main>
+            <section class="lab-description">
+                <h2>Lab Objective</h2>
+                <p>Learn how XSS can be triggered through image error events when the image source fails to load.</p>
+                <div class="lab-objective">
+                    Goal: Execute JavaScript using the onerror event handler of an img tag.
+                </div>
+            </section>
+
+            <section class="vulnerable-section">
+                <div class="input-group">
+                    <label for="imageInput">Enter image URL:</label>
+                    <input type="text" id="imageInput" placeholder="https://example.com/image.jpg">
+                    <button onclick="loadImage()">Load Image</button>
+                    <button class="reset-button" data-lab="lab5">Reset</button>
+                </div>
+
+                <div class="output-area">
+                    <span class="output-label">Image Display</span>
+                    <div id="imageContainer">
+                        <img src="valid-image.jpg" alt="Valid Image" style="max-width: 300px;">
+                    </div>
+                </div>
+            </section>
+
+            <section class="lab-description">
+                <h3>💡 Hints</h3>
+                <ul>
+                    <li>Use a non-existent image URL to trigger onerror</li>
+                    <li>Try: x" onerror="alert('XSS')</li>
+                    <li>Combine with src that will fail: src="invalid.jpg" onerror="alert(1)"</li>
+                </ul>
+                
+                <h3>📝 Notes</h3>
+                <ul>
+                    <li>onerror executes when an image fails to load</li>
+                    <li>This is a common vector in comment sections and user-uploaded content</li>
+                    <li>The payload is in the attribute, not in script tags</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>© 2026 - <span id="currentYear"></span> | Created by Satyajit Sethy</p>
+                <a href="https://github.com/sethysatyajit" target="_blank" rel="noopener noreferrer" class="github-link">GitHub</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        function loadImage() {
+            const imageUrl = document.getElementById('imageInput').value;
+            const container = document.getElementById('imageContainer');
+            
+            // VULNERABLE CODE: Constructing image tag with user input
+            const imgTag = '<img src="' + imageUrl + '" alt="User Image" style="max-width: 300px;">';
+            container.innerHTML = imgTag;
+            
+            console.log('Image loaded with URL:', imageUrl);
+        }
+    </script>
+</body>
+</html>

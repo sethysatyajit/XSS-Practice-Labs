@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Event Handler XSS Injection Lab - Advanced XSS Practice Lab for Ethical Cybersecurity Training by Satyajit Sethy">
+    <meta name="author" content="Satyajit Sethy">
+    <title>Lab #06 - Event Handler Injection | XSS Practice Lab</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="lab-container">
+        <header class="lab-header">
+            <h1 class="glitch" data-text="LAB #06: EVENT HANDLER XSS">LAB #06: EVENT HANDLER INJECTION</h1>
+            <div class="warning-banner">
+                ⚠️ This platform is for ethical cybersecurity learning purposes only. ⚠️
+            </div>
+        </header>
+
+        <main>
+            <section class="lab-description">
+                <h2>Lab Objective</h2>
+                <p>Explore various event handler-based XSS vectors including mouse events, focus events, and more.</p>
+                <div class="lab-objective">
+                    Goal: Trigger XSS using different HTML event handlers.
+                </div>
+            </section>
+
+            <section class="vulnerable-section">
+                <div class="input-group">
+                    <label for="eventInput">Enter event handler code:</label>
+                    <input type="text" id="eventInput" placeholder='e.g., onmouseover="alert(1)"'>
+                    <button onclick="createElement()">Create Element</button>
+                    <button class="reset-button" data-lab="lab6">Reset</button>
+                </div>
+
+                <div class="output-area">
+                    <span class="output-label">Generated Element</span>
+                    <div id="eventOutput"></div>
+                </div>
+                
+                <p class="mt-20">Try these event handlers:</p>
+                <ul>
+                    <li>onmouseover</li>
+                    <li>onclick</li>
+                    <li>onfocus</li>
+                    <li>onload</li>
+                    <li>onerror</li>
+                </ul>
+            </section>
+
+            <section class="lab-description">
+                <h3>💡 Hints</h3>
+                <ul>
+                    <li>Create a button with: &lt;button onmouseover="alert('XSS')"&gt;Hover me&lt;/button&gt;</li>
+                    <li>Try different events that trigger on user interaction</li>
+                    <li>Some events trigger automatically (onload, onerror)</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>© 2026 - <span id="currentYear"></span> | Created by Satyajit Sethy</p>
+                <a href="https://github.com/sethysatyajit" target="_blank" rel="noopener noreferrer" class="github-link">GitHub</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        function createElement() {
+            const userInput = document.getElementById('eventInput').value;
+            const output = document.getElementById('eventOutput');
+            
+            // VULNERABLE CODE: Creating HTML element with user input
+            output.innerHTML = userInput;
+            
+            console.log('Element created:', userInput);
+        }
+    </script>
+</body>
+</html>

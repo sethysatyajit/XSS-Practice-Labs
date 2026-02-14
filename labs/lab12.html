@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Advanced Filter Bypass XSS Lab - Advanced XSS Practice Lab for Ethical Cybersecurity Training by Satyajit Sethy">
+    <meta name="author" content="Satyajit Sethy">
+    <title>Lab #12 - Advanced Filter Bypass | XSS Practice Lab</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        /* Additional styles for filter visualization */
+        .filter-info {
+            background-color: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .filter-tag {
+            display: inline-block;
+            background-color: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff0000;
+            color: #ff0000;
+            padding: 3px 8px;
+            margin: 2px;
+            border-radius: 3px;
+            font-size: 0.9rem;
+        }
+        .success-message {
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="lab-container">
+        <header class="lab-header">
+            <h1 class="glitch" data-text="LAB #12: ADVANCED FILTER BYPASS">LAB #12: ADVANCED FILTER BYPASS</h1>
+            <div class="warning-banner">
+                ⚠️ This platform is for ethical cybersecurity learning purposes only. ⚠️
+            </div>
+        </header>
+
+        <main>
+            <section class="lab-description">
+                <h2>Lab Objective</h2>
+                <p>Bypass advanced XSS filters that remove multiple patterns and use blacklists. This lab simulates real-world WAF (Web Application Firewall) bypass techniques.</p>
+                <div class="lab-objective">
+                    Goal: Execute JavaScript despite sophisticated filtering that blocks common XSS vectors.
+                </div>
+            </section>
+
+            <div class="filter-info">
+                <h3>🛡️ Active Filters:</h3>
+                <span class="filter-tag">&lt;script&gt;</span>
+                <span class="filter-tag">onerror</span>
+                <span class="filter-tag">onload</span>
+                <span class="filter-tag">onclick</span>
+                <span class="filter-tag">onmouseover</span>
+                <span class="filter-tag">javascript:</span>
+                <span class="filter-tag">alert</span>
+                <span class="filter-tag">prompt</span>
+                <span class="filter-tag">confirm</span>
+                <span class="filter-tag">eval</span>
+                <span class="filter-tag">Function</span>
+                <p class="mt-20"><strong>Filter Mode:</strong> Case-insensitive removal with 3-pass sanitization</p>
+            </div>
+
+            <section class="vulnerable-section">
+                <div class="input-group">
+                    <label for="advancedInput">Enter your payload (advanced filtering active):</label>
+                    <textarea id="advancedInput" rows="4" cols="50" placeholder="Try to bypass the advanced filter..." style="width: 100%;"></textarea>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button onclick="processAdvanced()">Submit Payload</button>
+                        <button onclick="showFilteredVersion()">Show Filtered Only</button>
+                        <button onclick="resetLab12()" class="reset-button">Reset Lab</button>
+                    </div>
+                </div>
+
+                <div class="output-area" style="min-height: 150px;">
+                    <span class="output-label">Result</span>
+                    <div id="advancedOutput"></div>
+                </div>
+                
+                <div class="output-area" style="min-height: 50px; margin-top: 20px;">
+                    <span class="output-label">Filtered Payload</span>
+                    <div id="filteredPayload" style="word-break: break-all; color: #ffff00;"></div>
+                </div>
+            </section>
+
+            <section class="lab-description">
+                <h3>🎯 Bypass Techniques to Try:</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div style="border: 1px solid #00ff00; padding: 10px;">
+                        <h4>Mixed Case</h4>
+                        <code>&lt;ScRiPt&gt;alert('XSS')&lt;/ScRiPt&gt;</code>
+                    </div>
+                    <div style="border: 1px solid #00ff00; padding: 10px;">
+                        <h4>Nested Tags</h4>
+                        <code>&lt;scr&lt;script&gt;ipt&gt;alert(1)&lt;/scr&lt;/script&gt;ipt&gt;</code>
+                    </div>
+                    <div style="border: 1px solid #00ff00; padding: 10px;">
+                        <h4>Alternative Events</h4>
+                        <code>&lt;img src=x onfocus="alert(1)" autofocus&gt;</code>
+                    </div>
+                    <div style="border: 1px solid #00ff00; padding: 10px;">
+                        <h4>Encoded Payloads</h4>
+                        <code>&lt;img src=x onerror=&#97;&#108;&#101;&#114;&#116;(1)&gt;</code>
+                    </div>
+                </div>
+                
+                <h3 class="mt-20">💡 Advanced Hints</h3>
+                <ul>
+                    <li>The filter removes patterns but doesn't sanitize recursively</li>
+                    <li>Try: <code>&lt;svg onload=&#97;&#108;&#101;&#114;&#116;(1)&gt;</code></li>
+                    <li>HTML5 tags like <code>&lt;video&gt;</code>, <code>&lt;audio&gt;</code> might work</li>
+                    <li>Try using <code>with</code> or <code>setTimeout</code> instead of blocked functions</li>
+                    <li>Character encoding can bypass string matching</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>© 2026 - <span id="currentYear"></span> | Created by Satyajit Sethy</p>
+                <a href="https://github.com/sethysatyajit" target="_blank" rel="noopener noreferrer" class="github-link">GitHub</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        // Advanced filter function with multiple passes
+        function advancedFilter(input) {
+            let filtered = input;
+            const originalInput = input;
+            
+            // Multiple passes (3 times) to catch nested bypass attempts
+            for (let pass = 0; pass < 3; pass++) {
+                // Remove script tags with various patterns
+                filtered = filtered.replace(/<script[^>]*>/gi, '[SCRIPT-TAG-REMOVED]');
+                filtered = filtered.replace(/<\/script[^>]*>/gi, '[/SCRIPT-TAG-REMOVED]');
+                
+                // Remove common event handlers
+                const events = ['onerror', 'onload', 'onclick', 'onmouseover', 'onfocus', 'onblur', 'onsubmit', 'onreset', 'onchange', 'onselect'];
+                events.forEach(event => {
+                    const eventRegex = new RegExp(event, 'gi');
+                    filtered = filtered.replace(eventRegex, '[EVENT-REMOVED]');
+                });
+                
+                // Remove javascript protocol
+                filtered = filtered.replace(/javascript\s*:/gi, '[PROTOCOL-REMOVED]:');
+                
+                // Remove common function names
+                const functions = ['alert', 'prompt', 'confirm', 'eval', 'Function', 'setTimeout', 'setInterval'];
+                functions.forEach(func => {
+                    const funcRegex = new RegExp(func, 'gi');
+                    filtered = filtered.replace(funcRegex, '[FUNCTION-REMOVED]');
+                });
+                
+                // Remove common XSS vectors
+                filtered = filtered.replace(/src\s*=\s*['"]?\s*['"]?/gi, 'src="[REMOVED]"');
+                filtered = filtered.replace(/href\s*=\s*['"]?\s*['"]?/gi, 'href="[REMOVED]"');
+                
+                // Remove data: URIs
+                filtered = filtered.replace(/data\s*:\s*text\/html/gi, 'data:[REMOVED]');
+            }
+            
+            return {
+                filtered: filtered,
+                wasModified: filtered !== originalInput
+            };
+        }
+
+        function processAdvanced() {
+            const userInput = document.getElementById('advancedInput').value;
+            const output = document.getElementById('advancedOutput');
+            const filteredPayloadEl = document.getElementById('filteredPayload');
+            
+            // Apply advanced filtering
+            const filterResult = advancedFilter(userInput);
+            
+            // Show filtered version
+            filteredPayloadEl.textContent = filterResult.filtered || '(empty)';
+            
+            // VULNERABLE CODE: Still uses innerHTML despite filtering
+            // The vulnerability exists because the filtering might be bypassed
+            output.innerHTML = filterResult.wasModified ? 
+                '<div class="filter-info">Filtered output: ' + filterResult.filtered + '</div>' :
+                '<div class="filter-info">No filtering applied: ' + userInput + '</div>';
+            
+            // Check if XSS was successful (for educational feedback)
+            console.log('Original payload:', userInput);
+            console.log('After filtering:', filterResult.filtered);
+            
+            // Educational feedback
+            if (userInput.includes('<') && userInput.includes('>')) {
+                console.log('%c⚠️ Attempted to inject HTML tags!', 'color: #ffff00');
+            }
+        }
+        
+        function showFilteredVersion() {
+            const userInput = document.getElementById('advancedInput').value;
+            const filteredPayloadEl = document.getElementById('filteredPayload');
+            
+            const filterResult = advancedFilter(userInput);
+            filteredPayloadEl.textContent = filterResult.filtered || '(empty)';
+            
+            alert('Check the "Filtered Payload" section to see how your input was modified!');
+        }
+        
+        function resetLab12() {
+            document.getElementById('advancedInput').value = '';
+            document.getElementById('advancedOutput').innerHTML = '';
+            document.getElementById('filteredPayload').innerHTML = '';
+            
+            // Add a success message
+            const output = document.getElementById('advancedOutput');
+            output.innerHTML = '<div class="success-message">Lab reset successfully! Ready for new payloads.</div>';
+            setTimeout(() => {
+                if (output.innerHTML.includes('Lab reset')) {
+                    output.innerHTML = '';
+                }
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

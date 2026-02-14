@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="URL Parameter XSS Lab - Advanced XSS Practice Lab for Ethical Cybersecurity Training by Satyajit Sethy">
+    <meta name="author" content="Satyajit Sethy">
+    <title>Lab #04 - URL Parameter XSS | XSS Practice Lab</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="lab-container">
+        <header class="lab-header">
+            <h1 class="glitch" data-text="LAB #04: URL PARAMETER XSS">LAB #04: URL PARAMETER XSS</h1>
+            <div class="warning-banner">
+                ⚠️ This platform is for ethical cybersecurity learning purposes only. ⚠️
+            </div>
+        </header>
+
+        <main>
+            <section class="lab-description">
+                <h2>Lab Objective</h2>
+                <p>Exploit XSS vulnerabilities through URL parameters that are reflected in the page.</p>
+                <div class="lab-objective">
+                    Goal: Inject JavaScript code through the URL's 'search' parameter.
+                </div>
+            </section>
+
+            <section class="vulnerable-section">
+                <div class="input-group">
+                    <p>Current URL parameters will be reflected below.</p>
+                    <p>Try adding ?search=test to the URL</p>
+                    <button onclick="refreshParams()">Refresh Parameters</button>
+                    <button class="reset-button" data-lab="lab4">Reset</button>
+                </div>
+
+                <div class="output-area">
+                    <span class="output-label">Search Results</span>
+                    <div id="urlOutput"></div>
+                </div>
+            </section>
+
+            <section class="lab-description">
+                <h3>💡 Hints</h3>
+                <ul>
+                    <li>Modify the URL in your browser's address bar</li>
+                    <li>Try: ?search=&lt;script&gt;alert('URL-XSS')&lt;/script&gt;</li>
+                    <li>URL encoding might be needed: %3Cscript%3Ealert('XSS')%3C/script%3E</li>
+                </ul>
+                
+                <h3>📝 Notes</h3>
+                <ul>
+                    <li>URL parameters are often used in search functionality</li>
+                    <li>These parameters can be crafted and shared as malicious links</li>
+                    <li>This is a type of reflected XSS</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>© 2026 - <span id="currentYear"></span> | Created by Satyajit Sethy</p>
+                <a href="https://github.com/sethysatyajit" target="_blank" rel="noopener noreferrer" class="github-link">GitHub</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        // Parse and display URL parameters on load
+        window.onload = function() {
+            displayUrlParams();
+        };
+
+        function displayUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const searchParam = params.get('search');
+            const output = document.getElementById('urlOutput');
+            
+            if (searchParam) {
+                // VULNERABLE CODE: Directly inserting URL parameter into HTML
+                output.innerHTML = 'Search results for: ' + searchParam;
+            } else {
+                output.innerHTML = 'No search parameter provided. Try adding ?search=test to the URL.';
+            }
+        }
+
+        function refreshParams() {
+            displayUrlParams();
+        }
+    </script>
+</body>
+</html>

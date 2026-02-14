@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Basic Reflected XSS Lab - Advanced XSS Practice Lab for Ethical Cybersecurity Training by Satyajit Sethy">
+    <meta name="author" content="Satyajit Sethy">
+    <title>Lab #01 - Basic Reflected XSS | XSS Practice Lab</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="lab-container">
+        <header class="lab-header">
+            <h1 class="glitch" data-text="LAB #01: REFLECTED XSS">LAB #01: REFLECTED XSS</h1>
+            <div class="warning-banner">
+                ⚠️ This platform is for ethical cybersecurity learning purposes only. ⚠️
+            </div>
+        </header>
+
+        <main>
+            <section class="lab-description">
+                <h2>Lab Objective</h2>
+                <p>Learn how basic reflected XSS works by injecting JavaScript code that gets reflected back to the user.</p>
+                <div class="lab-objective">
+                    Goal: Trigger an alert box with the message "XSS" by injecting malicious code.
+                </div>
+            </section>
+
+            <section class="vulnerable-section">
+                <div class="input-group">
+                    <label for="userInput">Enter your name:</label>
+                    <input type="text" id="userInput" placeholder="e.g., John Doe">
+                    <button onclick="reflectInput()">Submit</button>
+                    <button class="reset-button" data-lab="lab1">Reset</button>
+                </div>
+
+                <div class="output-area">
+                    <span class="output-label">Output</span>
+                    <div id="output"></div>
+                </div>
+            </section>
+
+            <section class="lab-description">
+                <h3>💡 Hints</h3>
+                <ul>
+                    <li>Try using: &lt;script&gt;alert('XSS')&lt;/script&gt;</li>
+                    <li>The input is directly inserted into the page without sanitization</li>
+                    <li>Check how the page reflects your input back</li>
+                </ul>
+                
+                <h3>📝 Notes</h3>
+                <ul>
+                    <li>This lab demonstrates the most basic form of XSS</li>
+                    <li>No filters or sanitization are applied</li>
+                    <li>The vulnerability exists because user input is directly inserted into the HTML</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>© 2026 - <span id="currentYear"></span> | Created by Satyajit Sethy</p>
+                <a href="https://github.com/sethysatyajit" target="_blank" rel="noopener noreferrer" class="github-link">GitHub</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        function reflectInput() {
+            const userInput = document.getElementById('userInput').value;
+            const output = document.getElementById('output');
+            
+            // VULNERABLE CODE: Directly inserting user input into HTML
+            output.innerHTML = `Hello, ${userInput}!`;
+            
+            // Log for educational purposes
+            console.log('Input reflected:', userInput);
+        }
+    </script>
+</body>
+</html>

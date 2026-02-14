@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Script Injection XSS Lab - Advanced XSS Practice Lab for Ethical Cybersecurity Training by Satyajit Sethy">
+    <meta name="author" content="Satyajit Sethy">
+    <title>Lab #07 - Script Injection | XSS Practice Lab</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="lab-container">
+        <header class="lab-header">
+            <h1 class="glitch" data-text="LAB #07: SCRIPT INJECTION">LAB #07: SCRIPT INJECTION</h1>
+            <div class="warning-banner">
+                ⚠️ This platform is for ethical cybersecurity learning purposes only. ⚠️
+            </div>
+        </header>
+
+        <main>
+            <section class="lab-description">
+                <h2>Lab Objective</h2>
+                <p>Learn how direct script tag injection works and why it's one of the most dangerous XSS vectors.</p>
+                <div class="lab-objective">
+                    Goal: Inject and execute JavaScript using script tags.
+                </div>
+            </section>
+
+            <section class="vulnerable-section">
+                <div class="input-group">
+                    <label for="scriptInput">Enter your comment:</label>
+                    <textarea id="scriptInput" rows="4" cols="50" placeholder="Write your comment here..."></textarea>
+                    <button onclick="postComment()">Post Comment</button>
+                    <button class="reset-button" data-lab="lab7">Reset</button>
+                </div>
+
+                <div class="output-area">
+                    <span class="output-label">Comments</span>
+                    <div id="scriptOutput"></div>
+                </div>
+            </section>
+
+            <section class="lab-description">
+                <h3>💡 Hints</h3>
+                <ul>
+                    <li>Try: &lt;script&gt;alert('Script Injection')&lt;/script&gt;</li>
+                    <li>Script tags execute immediately when inserted</li>
+                    <li>You can also try remote script inclusion</li>
+                </ul>
+                
+                <h3>📝 Notes</h3>
+                <ul>
+                    <li>Direct script injection is often blocked by modern frameworks</li>
+                    <li>This demonstrates why user input should never be inserted as raw HTML</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>© 2026 - <span id="currentYear"></span> | Created by Satyajit Sethy</p>
+                <a href="https://github.com/sethysatyajit" target="_blank" rel="noopener noreferrer" class="github-link">GitHub</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        function postComment() {
+            const comment = document.getElementById('scriptInput').value;
+            const output = document.getElementById('scriptOutput');
+            
+            // VULNERABLE CODE: Direct script injection
+            output.innerHTML = output.innerHTML + '<div class="comment">' + comment + '</div><hr>';
+            
+            console.log('Comment posted:', comment);
+        }
+    </script>
+</body>
+</html>

